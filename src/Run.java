@@ -22,16 +22,6 @@ public class Run {
             NFA ndfa = new NFA(contents);
             ndfa.transferToDFA();
 
-//            if( ndfa.isLanda()) {
-//                System.out.println("with λ");
-//                Transform ndfaWithoutLanda = ndfa.transferToWithNoLanda();
-//                ndfa.transferToDFA();
-//            }
-//            else {
-//                System.out.println("with no λ");
-//                ndfa.transferToDFA();
-//            }
-
         }
         catch (FileNotFoundException e) {
             e.printStackTrace();

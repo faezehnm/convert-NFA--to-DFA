@@ -3,6 +3,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * each state of machine
+ */
 public class State {
     private String name ;
     private HashMap<String, ArrayList<String>> sides;
@@ -15,19 +18,6 @@ public class State {
         closures = new ArrayList<>();
     }
 
-//    public void addCompletSides(HashMap<String, ArrayList<String>> toAdd)
-//    {
-//        for (Map.Entry<String, ArrayList<String>> entry : toAdd.entrySet()){
-//            for (String value : entry.getValue()) {
-//                addSide(entry.getKey(),value);
-//            }
-//        }
-////
-//        System.out.println("8888888ohmygoodnes888888888");
-//        System.out.println(toAdd);
-//        System.out.println(sides);
-//        System.out.println("8888888ohmygoodnes888888888");
-//    }
 
     public void addSide(String key , String value)
     {
@@ -78,11 +68,13 @@ public class State {
         closures.addAll(news) ;
     }
 
-    public ArrayList<String> getClosures() {
+    public ArrayList<String> getClosures()
+    {
         return closures;
     }
 
-    public HashMap<String, ArrayList<String>> getSides() {
+    public HashMap<String, ArrayList<String>> getSides()
+    {
         return sides;
     }
 

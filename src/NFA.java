@@ -32,8 +32,6 @@ public class NFA {
         setSides(contents);
         allClosures= new HashMap<>();
         setLandaClosures();
-
-
     }
 
 
@@ -110,9 +108,8 @@ public class NFA {
     }
 
     /**
-     * convert lastVersion.NFA to DFA
+     * find all closures of nfa
      */
-
     private void setLandaClosures()
     {
         //set single landa
@@ -158,6 +155,9 @@ public class NFA {
 
     }
 
+    /**
+     * print closures of nfa
+     */
     private void printAllClosures()
     {
 //        for (Map.Entry<State, ArrayList<String>> entry : allClosures.entrySet())
@@ -167,6 +167,11 @@ public class NFA {
             System.out.println(state.getName() + " " + state.getClosures());
     }
 
+    /**
+     * find state  with state's name
+     * @param name
+     * @return
+     */
     private State findStateWithName(String name)
     {
         State res = new State("") ;
@@ -180,7 +185,9 @@ public class NFA {
         return res;
     }
 
-
+    /**
+     * convert nfa to dfa
+     */
     public void transferToDFA()
     {
         DFA dfa = new DFA();
@@ -188,18 +195,12 @@ public class NFA {
         setDfaSidesAndStates(dfa);
         setDfaFinalStates(dfa);
         setDfaStartState(dfa);
-        System.out.println(dfa.getStartState());
 
+        System.out.println(dfa.getSides());
+        System.out.println("states");
+        System.out.println(dfa.getStates());
+        dfa.saveInFile();
 
-
-
-
-//        dfa.setStates(transferDFAState());
-//
-//        dfa.setStartState(startState);
-//        dfa.setFinalStates(transferFinalState(transferDFAState()));
-//        dfa.setSides(newSides);
-//        dfa.saveInFile();
     }
 
     /**
@@ -269,6 +270,7 @@ public class NFA {
         for( String stateName : getSubState(currentStateName) ) {
             State state = findStateWithName(stateName);
 
+            System.out.println(state.getName() +" has side with " + alphabet+ " :" +state.getSides().containsKey(alphabet));
             //check is there side or not
             if (state.getSides().containsKey(alphabet)) {
                 ArrayList<String> values = state.getSides().get(alphabet);
@@ -332,20 +334,6 @@ public class NFA {
 
     }
 
-//    private void  creatMultiState(ArrayList<String> subStates , String name)
-//    {
-//        State state = new State(name);
-//        states.add(state) ;
-//        for( String str : subStates){
-//            System.out.println("shame on u : " + str);
-//            state.addCompletSides(findStateWithName(str).getSides());
-//        }
-//        System.out.println("adding state to NFA : " +state.getName());
-//        System.out.println(1111111111);
-//        System.out.println(state.getSides());
-//        System.out.println(1111111111);
-//    }
-
     private ArrayList<String> getSubState(String stateName)
     {
         ArrayList<String> res = new ArrayList<>();
@@ -370,52 +358,14 @@ public class NFA {
 //        System.out.println(dfa.getFinalStates());
     }
 
+    /**
+     * find dfa's start state
+     * @param dfa dfs
+     */
     private void setDfaStartState(DFA dfa)
     {
         dfa.setStartState(convertArrayToString(findStateWithName(startState.getName()).getClosures()));
 
     }
-
-//    //TODO: check this method
-//    private String setNewCurrentState(ArrayList<String> states)
-//    {
-//        String res ="";
-//        for( String state : states){
-//            res += state ;
-//        }
-//        return res;
-//    }
-
-
-
-//    private String getKey(String side)
-//    {
-//        String res = "";
-//        for( int i=0 ; i<side.length() ; i++){
-//            for( int j=0 ; j<alphabets.size() ; j++ ){
-//                if( side.contains(alphabets.get(j))) {
-//                    String parts[] = side.split(Pattern.quote(alphabets.get(j)));
-//                    res =parts[0] + alphabets.get(j);
-//                }
-//            }
-//        }
-//        return res ;
-//    }
-//
-//    private String getValue(String side)
-//    {
-//        String res = "";
-//        for( int i=0 ; i<side.length() ; i++){
-//            for( int j=0 ; j<alphabets.size() ; j++ ){
-//                if( side.contains(alphabets.get(j))) {
-//                    String parts[] = side.split(Pattern.quote(alphabets.get(j)));
-//                    res =parts[1];
-//                }
-//            }
-//        }
-//        return res ;
-//    }
-
-
 
 }
