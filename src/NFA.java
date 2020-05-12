@@ -15,7 +15,7 @@ public class NFA {
     private ArrayList<State> states ;
     private State startState ;
     private ArrayList<State> finalStates ;
-    private HashMap<String, ArrayList<String>> landaClosures ;
+    private HashMap<State, ArrayList<String>> allClosures ;
 
     /**
      * creat object
@@ -31,8 +31,8 @@ public class NFA {
         setSides(contents);
 
 
-        landaClosures= new HashMap<>();
-//        setLandaClosures();
+        allClosures= new HashMap<>();
+        setLandaClosures();
 //        System.out.println(landaClosures);
 
     }
@@ -97,10 +97,13 @@ public class NFA {
         for( int i=4 ; i<contents.size() ; i++) {
             String parts[] = contents.get(i).split("\\s+");
             for( State state : states){
-                if(state.getState().equals(parts[0])){
+                if(state.getName().equals(parts[0])){
                     state.addSide(parts[1],parts[2]);
                 }
             }
+        }
+        for( State state : states){
+            state.setClosures();
         }
 //        for( State state : states)
 //            System.out.println(state.giveSides());
@@ -111,55 +114,44 @@ public class NFA {
      * convert lastVersion.NFA to DFA
      */
 
-//    private void setLandaClosures()
-//    {
-//        //set single landa
-//        for(String state : states){
-//            ArrayList<String> closures = new ArrayList<>();
-//            for( String side : sides){
-//                if( side.charAt(1) == state.charAt(1) && (side.charAt(2)+"").equals("λ")){
-//                    closures.add("q" + side.charAt(4));
-//                }
-//            }
-//            landaClosures.put(state ,closures) ;
-//        }
-//        //set multi landa
-//        for(Map.Entry<String, ArrayList<String>> entry : landaClosures.entrySet()) {
-//            for(String str : entry.getValue()){
-//                if( landaClosures.containsKey(str)){
-//                    ArrayList<String> news = new ArrayList<>();
-//                    news.addAll(entry.getValue());
-//                    news.addAll(landaClosures.get(str));
-//                    landaClosures.put(entry.getKey(),news);
-//                }
-//            }
-//        }
-//        //add each state to it's landa-closure
-//        for( String state : states){
-//            if( landaClosures.containsKey(state) && !landaClosures.get(state).contains(state)){
-//                ArrayList<String> newKey = landaClosures.get(state) ;
-//                newKey.add(state);
-//                landaClosures.put(state,newKey);
-//            }
-//        }
-//        //remove duplicated
-//        for(Map.Entry<String, ArrayList<String>> entry : landaClosures.entrySet()) {
-//            ArrayList<String> newArray = new ArrayList<>();
-//            for (String str : entry.getValue()) {
-//                if (!newArray.contains(str))
-//                    newArray.add(str);
-//            }
-//            landaClosures.put(entry.getKey(), newArray);
-//        }
-//
-//
-//        //sort landa-closures
-//        for(Map.Entry<String, ArrayList<String>> entry : landaClosures.entrySet()) {
-//            Collections.sort(entry.getValue());
-//        }
-//
-//
-//    }
+    private void setLandaClosures()
+    {
+        //set single landa
+        for (State state : states)
+            allClosures.put(state, state.getClosures());
+
+
+        //set multi landa
+        for (Map.Entry<State, ArrayList<String>> entry : allClosures.entrySet()) {
+            for (String str : entry.getValue()) {
+                if (allClosures.containsKey(str)) {
+                    ArrayList<String> news = new ArrayList<>();
+                    news.addAll(entry.getValue());
+                    news.addAll(allClosures.get(findStateWithName(str)));
+                    allClosures.put(entry.getKey(), news);
+                }
+            }
+        }
+
+        //sort landa-closures
+        for (Map.Entry<State, ArrayList<String>> entry : allClosures.entrySet()) {
+            Collections.sort(entry.getValue());
+        }
+
+//        for (Map.Entry<State, ArrayList<String>> entry : allClosures.entrySet())
+//            System.out.println(entry.getKey().getName() + " " + entry.getValue());
+    }
+
+    private State findStateWithName(String name)
+    {
+        for (State state : states){
+            if( state.getName().equals(name))
+                return state;
+        }
+        return null;
+    }
+
+
 //
 //    public void transferToDFA()
 //    {

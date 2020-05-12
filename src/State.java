@@ -4,12 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class State {
-    private String state ;
+    private String name ;
     private HashMap<String, ArrayList<String>> sides;
+    private ArrayList<String> closures ;
 
-    public State(String state){
-        this.state = state ;
+    public State(String name)
+    {
+        this.name = name ;
         sides = new HashMap<>();
+        closures = new ArrayList<>();
     }
 
     public void addSide(String key , String value)
@@ -24,9 +27,9 @@ public class State {
     }
 
 
-    public String getState()
+    public String getName()
     {
-        return state;
+        return name;
     }
 
     public ArrayList<String> giveSides()
@@ -34,9 +37,22 @@ public class State {
         ArrayList<String> res = new ArrayList<>();
         for (Map.Entry<String, ArrayList<String>> entry : sides.entrySet()) {
             for (String value : entry.getValue()) {
-                res.add(state + " " + entry.getKey() + " " + value);
+                res.add(name + " " + entry.getKey() + " " + value);
             }
         }
         return res;
+    }
+
+    public void setClosures()
+    {
+        closures.add(this.name) ;
+        for (Map.Entry<String, ArrayList<String>> entry : sides.entrySet()) {
+            if ( entry.getKey().equals("λ") )
+                closures.addAll(entry.getValue()) ;
+        }
+    }
+
+    public ArrayList<String> getClosures() {
+        return closures;
     }
 }
