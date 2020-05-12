@@ -187,6 +187,8 @@ public class NFA {
         dfa.setAlphabets(alphabets);
         setDfaSidesAndStates(dfa);
         setDfaFinalStates(dfa);
+        setDfaStartState(dfa);
+        System.out.println(dfa.getStartState());
 
 
 
@@ -366,6 +368,12 @@ public class NFA {
             }
         }
 //        System.out.println(dfa.getFinalStates());
+    }
+
+    private void setDfaStartState(DFA dfa)
+    {
+        dfa.setStartState(convertArrayToString(findStateWithName(startState.getName()).getClosures()));
+
     }
 
 //    //TODO: check this method

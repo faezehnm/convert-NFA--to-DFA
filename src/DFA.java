@@ -368,4 +368,13 @@ public class DFA {
     public ArrayList<String> getFinalStates() {
         return finalStates;
     }
+
+    public void setStartState(String startState) {
+        this.startState = startState;
+    }
+
+    public String getStartState() {
+        return startState;
+    }
 }
+
