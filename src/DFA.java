@@ -25,9 +25,7 @@ public class DFA {
     {
         states = new ArrayList<>();
         sides = new ArrayList<>();
-//        singleSides = new ArrayList<>();
-//        multiSides = new ArrayList<>();
-//        finalSides = new HashMap<>();
+
     }
 
 
@@ -358,4 +356,11 @@ public class DFA {
         return sides;
     }
 
+    public void setStates(ArrayList<String> states) {
+        this.states = states;
+    }
+
+    public void setSides(ArrayList<String> sides) {
+        this.sides = sides;
+    }
 }

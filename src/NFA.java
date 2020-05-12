@@ -1,3 +1,4 @@
+import java.awt.image.AreaAveragingScaleFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -153,7 +154,7 @@ public class NFA {
         }
 
 
-//        printAllClosures();
+        printAllClosures();
 
     }
 
@@ -199,57 +200,145 @@ public class NFA {
     {
         State state = findStateWithName(startState.getName());
         checkEachState(state , dfa);
+        removeDuplicatedDfaSide(dfa);
+        removeDuplicatedDfaState(dfa);
+//        System.out.println("********Sides******************");
+//        for( String side : dfa.getSides()){
+//            System.out.println(side);
+//        }
+//        for( String side : dfa.getStates()){
+//            System.out.println(side);
+//        }
     }
 
     private void checkEachState( State currentState, DFA dfa)
     {
-        dfa.getStates().add(currentState.getName());
+
+        String stateToAdd = "";
+        if( currentState.getName().equals(startState.getName()))
+            stateToAdd = convertArrayToString(currentState.getClosures()) ;
+        else
+            stateToAdd = currentState.getName();
+
+
+        dfa.getStates().add(stateToAdd);
+        System.out.println("add state : " +stateToAdd );
+        System.out.println("dfa states are : "+dfa.getStates());
+
+
+//        System.out.println(currentState.getName() + " hh " + currentState.getClosures());
 
 
         //iterate for each state in alphabets
         for( String alphabet :alphabets){
+            System.out.println("in state :" +stateToAdd + " , "+ "in alphabet : "+ alphabet);
 
             String endState = calculateEndState(currentState , alphabet);
+            System.out.println("end state is :" + endState);
+
             if( !endState.equals("")) {
-                dfa.getSides().add(currentState.getName() + " "+ alphabet +" " + endState);
+                String sideToAdd = "";
+
+                sideToAdd= stateToAdd + " " + alphabet + " " + endState;
+
+                dfa.getSides().add(sideToAdd);
+                System.out.println("side to add is :" +sideToAdd);
+
                 if( !dfa.getStates().contains(endState))
+                    System.out.println("go to");
                     checkEachState(findStateWithName(endState),dfa);
             }
 
+
         }
-        for( String side : dfa.getSides()){
-            System.out.println(side);
-        }
+
     }
+
+
 
     private String calculateEndState(State currentState , String alphabet)
     {
+//        System.out.println("***********************************");
         String endState = "" ;
+        ArrayList<String> ends = new ArrayList<>();
 
-        System.out.println(currentState.getClosures());
-        for( String stateName : allClosures.get(currentState)) {
+//        System.out.println(currentState.getClosures());
+
+        //iterate all closures of state
+        for( String stateName : currentState.getClosures()) {
+
             State state = findStateWithName(stateName);
 
+
+//            System.out.println(state.getName() +" has side with " + alphabet+ " :" +state.getSides().containsKey(alphabet));
             //check is there side or not
-            if (state.giveSides().contains(alphabet)) {
+            if (state.getSides().containsKey(alphabet)) {
                 ArrayList<String> values = state.getSides().get(alphabet);
+//                System.out.println(values);
 
                 //check for are values of current side
                 for (String value : values) {
-                    State state1 = findStateWithName(stateName);
+                    State state1 = findStateWithName(value);
+
+//                    System.out.println(value+" is in landa closures : " + allClosures.containsKey(state1) );
 
                     //add to result( end state of this state )
                     if (allClosures.containsKey(state1)) {
                         for (String str : allClosures.get(state1)) {
-                            endState += str;
+                            ends.add(str);
                         }
                     }
                 }
             }
         }
+
+        //remove duplicated state
+        ArrayList<String> news = new ArrayList<>() ;
+        for( String str : ends){
+            if( !news.contains(str))
+                news.add(str) ;
+        }
+        ends = news ;
+        for( String str : ends)
+            endState += str;
+
+//        System.out.println(endState);
+
+//        System.out.println("***********************************");
         return endState;
     }
 
+
+    private String convertArrayToString(ArrayList<String> arr)
+    {
+        String res ="";
+        for( String str : arr)
+            res+= str;
+
+        System.out.println("in converting: " + res);
+        return res;
+    }
+
+    private void removeDuplicatedDfaState(DFA dfa)
+    {
+        ArrayList<String> newStates = new ArrayList<>();
+        for(String state : dfa.getStates()){
+            if(!newStates.contains(state))
+                newStates.add(state);
+        }
+        dfa.setStates(newStates);
+
+    }
+    private void removeDuplicatedDfaSide(DFA dfa)
+    {
+        ArrayList<String> newSides = new ArrayList<>();
+        for(String side : dfa.getSides()){
+            if(!newSides.contains(side))
+                newSides.add(side);
+        }
+        dfa.setSides(newSides);
+
+    }
 
 
 //    //TODO: check this method

@@ -57,11 +57,8 @@ public class State {
      */
     public void updateClosures(ArrayList<String> news)
     {
-        for (Map.Entry<String, ArrayList<String>> entry : sides.entrySet()) {
-            if ( entry.getKey().equals("λ") )
-                closures = new ArrayList<>();
-                closures.addAll(news) ;
-        }
+        closures = new ArrayList<>();
+        closures.addAll(news) ;
     }
 
     public ArrayList<String> getClosures() {
