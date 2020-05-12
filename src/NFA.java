@@ -121,7 +121,6 @@ public class NFA {
         for (Map.Entry<State, ArrayList<String>> entry : allClosures.entrySet()) {
             for (String str : entry.getValue()) {
                 if (allClosures.containsKey(findStateWithName(str))) {
-                    System.out.println(777);
                     ArrayList<String> news = new ArrayList<>();
                     news.addAll(entry.getValue());
                     news.addAll(allClosures.get(findStateWithName(str)));
@@ -149,9 +148,6 @@ public class NFA {
         for (Map.Entry<State, ArrayList<String>> entry : allClosures.entrySet()) {
             entry.getKey().updateClosures(entry.getValue());
         }
-
-
-        printAllClosures();
 
     }
 
@@ -195,12 +191,7 @@ public class NFA {
         setDfaSidesAndStates(dfa);
         setDfaFinalStates(dfa);
         setDfaStartState(dfa);
-
-        System.out.println(dfa.getSides());
-        System.out.println("states");
-        System.out.println(dfa.getStates());
         dfa.saveInFile();
-
     }
 
     /**
@@ -270,7 +261,6 @@ public class NFA {
         for( String stateName : getSubState(currentStateName) ) {
             State state = findStateWithName(stateName);
 
-            System.out.println(state.getName() +" has side with " + alphabet+ " :" +state.getSides().containsKey(alphabet));
             //check is there side or not
             if (state.getSides().containsKey(alphabet)) {
                 ArrayList<String> values = state.getSides().get(alphabet);
