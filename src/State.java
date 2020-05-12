@@ -52,7 +52,23 @@ public class State {
         }
     }
 
+    /*
+    after adding multi closures
+     */
+    public void updateClosures(ArrayList<String> news)
+    {
+        for (Map.Entry<String, ArrayList<String>> entry : sides.entrySet()) {
+            if ( entry.getKey().equals("λ") )
+                closures = new ArrayList<>();
+                closures.addAll(news) ;
+        }
+    }
+
     public ArrayList<String> getClosures() {
         return closures;
+    }
+
+    public HashMap<String, ArrayList<String>> getSides() {
+        return sides;
     }
 }

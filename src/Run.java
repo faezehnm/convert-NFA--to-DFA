@@ -20,7 +20,7 @@ public class Run {
             }
             fr.close();
             NFA ndfa = new NFA(contents);
-//            ndfa.transferToDFA();
+            ndfa.transferToDFA();
 
 //            if( ndfa.isLanda()) {
 //                System.out.println("with λ");

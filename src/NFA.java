@@ -29,11 +29,9 @@ public class NFA {
         this.startState = new State(contents.get(2)) ;
         setFinalStates(contents.get(3).split(("\\s+")));
         setSides(contents);
-
-
         allClosures= new HashMap<>();
         setLandaClosures();
-//        System.out.println(landaClosures);
+
 
     }
 
@@ -124,7 +122,8 @@ public class NFA {
         //set multi landa
         for (Map.Entry<State, ArrayList<String>> entry : allClosures.entrySet()) {
             for (String str : entry.getValue()) {
-                if (allClosures.containsKey(str)) {
+                if (allClosures.containsKey(findStateWithName(str))) {
+                    System.out.println(777);
                     ArrayList<String> news = new ArrayList<>();
                     news.addAll(entry.getValue());
                     news.addAll(allClosures.get(findStateWithName(str)));
@@ -133,13 +132,38 @@ public class NFA {
             }
         }
 
+        //remove duplicate closure
+        for (Map.Entry<State, ArrayList<String>> entry : allClosures.entrySet() ){
+            ArrayList<String> news = new ArrayList<>();
+            for( String str : entry.getValue()){
+                if( !news.contains(str))
+                    news.add(str);
+            }
+            allClosures.put(entry.getKey(),news);
+        }
+
         //sort landa-closures
         for (Map.Entry<State, ArrayList<String>> entry : allClosures.entrySet()) {
             Collections.sort(entry.getValue());
         }
 
+        //update states's closures
+        for (Map.Entry<State, ArrayList<String>> entry : allClosures.entrySet()) {
+            entry.getKey().updateClosures(entry.getValue());
+        }
+
+
+//        printAllClosures();
+
+    }
+
+    private void printAllClosures()
+    {
 //        for (Map.Entry<State, ArrayList<String>> entry : allClosures.entrySet())
 //            System.out.println(entry.getKey().getName() + " " + entry.getValue());
+//        System.out.println(9);
+        for( State state : states)
+            System.out.println(state.getName() + " " + state.getClosures());
     }
 
     private State findStateWithName(String name)
@@ -152,59 +176,82 @@ public class NFA {
     }
 
 
+    public void transferToDFA()
+    {
+        DFA dfa = new DFA();
+        dfa.setAlphabets(alphabets);
+
+        setDfaSidesAndStates(dfa);
+
+
+
+
+
+//        dfa.setStates(transferDFAState());
 //
-//    public void transferToDFA()
-//    {
-//        DFA dfa = new DFA();
-//        dfa.setAlphabets(alphabets);
-//
-//        System.out.println(hashSides);
-//        setDfaSidesAndStates(dfa);
-////        System.out.println(landaClosures);
-//        System.out.println(dfa.getSides());
-//
-//
-//
-//
-////        dfa.setStates(transferDFAState());
-////
-////        dfa.setStartState(startState);
-////        dfa.setFinalStates(transferFinalState(transferDFAState()));
-////        dfa.setSides(newSides);
-////        dfa.saveInFile();
-//    }
-//
-//    private void setDfaSidesAndStates(DFA dfa)
-//    {
-//        checkEachState(startState , dfa);
-//    }
-//
-//    private void checkEachState( String currentState, DFA dfa)
-//    {
-//        for( String alphabet :alphabets){
-//            String res = "";
-//
-//            for( String state : landaClosures.get(currentState)){
-//                if( hashSides.containsKey(state+alphabet)){
-//                    if( landaClosures.containsKey(hashSides.get(state+alphabet))){
-//
-//                        String str =  setNewCurrentState( landaClosures.get(hashSides.get(state+alphabet)));
-//                        res += str ;
-//                    }
-//                }
-//            }
-//            if( !res.equals("")) {
-//                dfa.addSide(currentState + alphabet + res);
-//                dfa.addState(currentState);
-//
-//                if (!dfa.getStates().contains(res)) {
-//                    checkEachState(res,dfa);
-//                }
-//            }
-//        }
-//    }
-//
-//
+//        dfa.setStartState(startState);
+//        dfa.setFinalStates(transferFinalState(transferDFAState()));
+//        dfa.setSides(newSides);
+//        dfa.saveInFile();
+    }
+
+    private void setDfaSidesAndStates(DFA dfa)
+    {
+        State state = findStateWithName(startState.getName());
+        checkEachState(state , dfa);
+    }
+
+    private void checkEachState( State currentState, DFA dfa)
+    {
+        dfa.getStates().add(currentState.getName());
+
+
+        //iterate for each state in alphabets
+        for( String alphabet :alphabets){
+
+            String endState = calculateEndState(currentState , alphabet);
+            if( !endState.equals("")) {
+                dfa.getSides().add(currentState.getName() + " "+ alphabet +" " + endState);
+                if( !dfa.getStates().contains(endState))
+                    checkEachState(findStateWithName(endState),dfa);
+            }
+
+        }
+        for( String side : dfa.getSides()){
+            System.out.println(side);
+        }
+    }
+
+    private String calculateEndState(State currentState , String alphabet)
+    {
+        String endState = "" ;
+
+        System.out.println(currentState.getClosures());
+        for( String stateName : allClosures.get(currentState)) {
+            State state = findStateWithName(stateName);
+
+            //check is there side or not
+            if (state.giveSides().contains(alphabet)) {
+                ArrayList<String> values = state.getSides().get(alphabet);
+
+                //check for are values of current side
+                for (String value : values) {
+                    State state1 = findStateWithName(stateName);
+
+                    //add to result( end state of this state )
+                    if (allClosures.containsKey(state1)) {
+                        for (String str : allClosures.get(state1)) {
+                            endState += str;
+                        }
+                    }
+                }
+            }
+        }
+        return endState;
+    }
+
+
+
 //    //TODO: check this method
 //    private String setNewCurrentState(ArrayList<String> states)
 //    {
@@ -214,24 +261,9 @@ public class NFA {
 //        }
 //        return res;
 //    }
-//
-//
-//    private void putToHashMap()
-//    {
-//        for( int i=0 ; i<sides.size() ; i++){
-//            String key = getKey(sides.get(i)) ;
-//            String value = getValue(sides.get(i)) ;
-//            ArrayList<String> values = new ArrayList<>();
-//
-//            for( int j=1 ; j< value.length() ; j+=2){
-//                values.add("q"+value.charAt(j)) ;
-//            }
-//            hashSides.put(key,values);
-//        }
-//
-//    }
-//
-//
+
+
+
 //    private String getKey(String side)
 //    {
 //        String res = "";
@@ -259,7 +291,7 @@ public class NFA {
 //        }
 //        return res ;
 //    }
-//
-//
+
+
 
 }
