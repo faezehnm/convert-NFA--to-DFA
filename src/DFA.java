@@ -25,6 +25,7 @@ public class DFA {
     {
         states = new ArrayList<>();
         sides = new ArrayList<>();
+        finalStates = new ArrayList<>();
 
     }
 
@@ -362,5 +363,9 @@ public class DFA {
 
     public void setSides(ArrayList<String> sides) {
         this.sides = sides;
+    }
+
+    public ArrayList<String> getFinalStates() {
+        return finalStates;
     }
 }
