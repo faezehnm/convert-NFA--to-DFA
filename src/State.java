@@ -15,15 +15,32 @@ public class State {
         closures = new ArrayList<>();
     }
 
+//    public void addCompletSides(HashMap<String, ArrayList<String>> toAdd)
+//    {
+//        for (Map.Entry<String, ArrayList<String>> entry : toAdd.entrySet()){
+//            for (String value : entry.getValue()) {
+//                addSide(entry.getKey(),value);
+//            }
+//        }
+////
+//        System.out.println("8888888ohmygoodnes888888888");
+//        System.out.println(toAdd);
+//        System.out.println(sides);
+//        System.out.println("8888888ohmygoodnes888888888");
+//    }
+
     public void addSide(String key , String value)
     {
         if( !sides.containsKey(key)) {
             ArrayList<String> temp = new ArrayList<>();
-            temp.add(value) ;
+            temp.add(value);
             sides.put(key, temp);
         }
-        else
-            sides.get(key).add(value);
+        else {
+            if( !sides.get(key).contains(value))
+                sides.get(key).add(value);
+        }
+
     }
 
 
@@ -68,4 +85,5 @@ public class State {
     public HashMap<String, ArrayList<String>> getSides() {
         return sides;
     }
+
 }

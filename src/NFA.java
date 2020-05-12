@@ -169,11 +169,15 @@ public class NFA {
 
     private State findStateWithName(String name)
     {
+        State res = new State("") ;
         for (State state : states){
             if( state.getName().equals(name))
-                return state;
+                res = state;
         }
-        return null;
+        if( res.getName().equals(""))
+            res= new State(name);
+
+        return res;
     }
 
 
@@ -202,19 +206,20 @@ public class NFA {
         checkEachState(state , dfa);
         removeDuplicatedDfaSide(dfa);
         removeDuplicatedDfaState(dfa);
-//        System.out.println("********Sides******************");
-//        for( String side : dfa.getSides()){
-//            System.out.println(side);
-//        }
-//        for( String side : dfa.getStates()){
-//            System.out.println(side);
-//        }
+        System.out.println("********Sides******************");
+        for( String side : dfa.getSides()){
+            System.out.println(side);
+        }
+        for( String side : dfa.getStates()){
+            System.out.println(side);
+        }
     }
 
     private void checkEachState( State currentState, DFA dfa)
     {
 
         String stateToAdd = "";
+//        System.out.println("shy "+ currentState.getName());
         if( currentState.getName().equals(startState.getName()))
             stateToAdd = convertArrayToString(currentState.getClosures()) ;
         else
@@ -233,20 +238,22 @@ public class NFA {
         for( String alphabet :alphabets){
             System.out.println("in state :" +stateToAdd + " , "+ "in alphabet : "+ alphabet);
 
-            String endState = calculateEndState(currentState , alphabet);
+            String endState = calculateEndState(stateToAdd , alphabet);
             System.out.println("end state is :" + endState);
 
             if( !endState.equals("")) {
                 String sideToAdd = "";
 
-                sideToAdd= stateToAdd + " " + alphabet + " " + endState;
+                sideToAdd = stateToAdd + " " + alphabet + " " + endState;
 
                 dfa.getSides().add(sideToAdd);
-                System.out.println("side to add is :" +sideToAdd);
+                System.out.println("side to add is :" + sideToAdd);
 
-                if( !dfa.getStates().contains(endState))
+                if (!dfa.getStates().contains(endState)){
                     System.out.println("go to");
-                    checkEachState(findStateWithName(endState),dfa);
+
+                    checkEachState(findStateWithName(endState), dfa);
+                }
             }
 
 
@@ -256,7 +263,7 @@ public class NFA {
 
 
 
-    private String calculateEndState(State currentState , String alphabet)
+    private String calculateEndState(String currentStateName , String alphabet)
     {
 //        System.out.println("***********************************");
         String endState = "" ;
@@ -264,16 +271,19 @@ public class NFA {
 
 //        System.out.println(currentState.getClosures());
 
-        //iterate all closures of state
-        for( String stateName : currentState.getClosures()) {
+        //iterate all subState of state
+        System.out.println("ffucking "+ getSubState(currentStateName));
+        for( String stateName : getSubState(currentStateName) ) {
 
             State state = findStateWithName(stateName);
+//                State state = currentState;
 
 
-//            System.out.println(state.getName() +" has side with " + alphabet+ " :" +state.getSides().containsKey(alphabet));
+            System.out.println(state.getName() +" has side with " + alphabet+ " :" +state.getSides().containsKey(alphabet));
             //check is there side or not
             if (state.getSides().containsKey(alphabet)) {
                 ArrayList<String> values = state.getSides().get(alphabet);
+
 //                System.out.println(values);
 
                 //check for are values of current side
@@ -299,8 +309,14 @@ public class NFA {
                 news.add(str) ;
         }
         ends = news ;
+        //sort endState
+        Collections.sort(ends);
+
         for( String str : ends)
             endState += str;
+
+        //creat multi state for NFA
+//        creatMultiState(ends,endState);
 
 //        System.out.println(endState);
 
@@ -311,11 +327,12 @@ public class NFA {
 
     private String convertArrayToString(ArrayList<String> arr)
     {
+        Collections.sort(arr);
         String res ="";
         for( String str : arr)
             res+= str;
 
-        System.out.println("in converting: " + res);
+//        System.out.println("in converting: " + res);
         return res;
     }
 
@@ -340,6 +357,28 @@ public class NFA {
 
     }
 
+//    private void  creatMultiState(ArrayList<String> subStates , String name)
+//    {
+//        State state = new State(name);
+//        states.add(state) ;
+//        for( String str : subStates){
+//            System.out.println("shame on u : " + str);
+//            state.addCompletSides(findStateWithName(str).getSides());
+//        }
+//        System.out.println("adding state to NFA : " +state.getName());
+//        System.out.println(1111111111);
+//        System.out.println(state.getSides());
+//        System.out.println(1111111111);
+//    }
+
+    private ArrayList<String> getSubState(String stateName)
+    {
+        ArrayList<String> res = new ArrayList<>();
+        for(int i=1 ; i< stateName.length() ; i+=2 ){
+            res.add( "q" +stateName.charAt(i));
+        }
+        return res ;
+    }
 
 //    //TODO: check this method
 //    private String setNewCurrentState(ArrayList<String> states)
